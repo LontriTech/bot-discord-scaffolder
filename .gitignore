@@ -53,9 +53,9 @@ node_modules/
 *.o
 
 # Build output and distribution directories
-dist/
-build/
-
+/dist/
+/bin/
+/build/
 # Lock files
 package-lock.json
 yarn.lock
