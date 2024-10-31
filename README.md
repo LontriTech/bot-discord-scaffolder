@@ -16,6 +16,8 @@ Creates channels and categories on a Discord Community/Server based on YAML conf
 
 ## SCAFFOLDER_CONFIG_FILE
 
+Default: `channels.yaml`
+
 ---
 
 # YAML Configuration
