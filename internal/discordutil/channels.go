@@ -17,11 +17,11 @@ func FetchExistingChannels(dg *discordgo.Session, guildID string) (map[string]*d
 
 	for _, channel := range guildChannels {
 		if channel.Type == discordgo.ChannelTypeGuildCategory {
-			nameKey := NormalizeName(channel.Name)
+			nameKey := NormalizeConfigKeyName(channel.Name)
 			existingCategories[nameKey] = channel
 		} else {
 			parentID := channel.ParentID
-			nameKey := NormalizeName(channel.Name)
+			nameKey := NormalizeConfigKeyName(channel.Name)
 			key := fmt.Sprintf("%s|%s", parentID, nameKey)
 			existingChannels[key] = channel
 		}
@@ -29,7 +29,7 @@ func FetchExistingChannels(dg *discordgo.Session, guildID string) (map[string]*d
 	return existingCategories, existingChannels, nil
 }
 
-func CreateCategory(session *discordgo.Session, guildID string, config CategoryConfig) (string, error) {
+func CreateCategory(session *discordgo.Session, guildID string, config CategoryConfig, categoryName string) (string, error) {
 	var overwrites []*discordgo.PermissionOverwrite
 
 	if config.Private {
@@ -42,16 +42,8 @@ func CreateCategory(session *discordgo.Session, guildID string, config CategoryC
 		overwrites = append(overwrites, overwrite)
 	}
 
-	var categoryName string
-
-	if config.Prefix != "" {
-		categoryName = AddNamePrefix(config.Prefix, config.Name)
-	} else {
-		categoryName = config.Name
-	}
-
 	channelData := discordgo.GuildChannelCreateData{
-		Name:                 NormalizeNameConfig(categoryName),
+		Name:                 categoryName,
 		Type:                 discordgo.ChannelTypeGuildCategory,
 		PermissionOverwrites: overwrites,
 	}
@@ -63,9 +55,9 @@ func CreateCategory(session *discordgo.Session, guildID string, config CategoryC
 	return channel.ID, nil
 }
 
-func CreateTextChannel(session *discordgo.Session, guildID, parentID string, config ChannelConfig) (string, error) {
+func CreateTextChannel(session *discordgo.Session, guildID, parentID string, config ChannelConfig, channelName string) (string, error) {
 	channelData := discordgo.GuildChannelCreateData{
-		Name:     NormalizeName(config.Name),
+		Name:     channelName,
 		Type:     discordgo.ChannelTypeGuildText,
 		ParentID: parentID,
 		Topic:    config.Topic,
@@ -80,9 +72,9 @@ func CreateTextChannel(session *discordgo.Session, guildID, parentID string, con
 	return channel.ID, nil
 }
 
-func CreateVoiceChannel(session *discordgo.Session, guildID, parentID string, config ChannelConfig) (string, error) {
+func CreateVoiceChannel(session *discordgo.Session, guildID, parentID string, config ChannelConfig, channelName string) (string, error) {
 	channelData := discordgo.GuildChannelCreateData{
-		Name:     NormalizeNameConfig(config.Name),
+		Name:     channelName,
 		Type:     discordgo.ChannelTypeGuildVoice,
 		ParentID: parentID,
 		Position: config.Position,
@@ -95,9 +87,9 @@ func CreateVoiceChannel(session *discordgo.Session, guildID, parentID string, co
 	return channel.ID, nil
 }
 
-func CreateForumChannel(session *discordgo.Session, guildID, parentID string, config ChannelConfig) (string, error) {
+func CreateForumChannel(session *discordgo.Session, guildID, parentID string, config ChannelConfig, channelName string) (string, error) {
 	channelData := discordgo.GuildChannelCreateData{
-		Name:     NormalizeNameConfig(config.Name),
+		Name:     channelName,
 		Type:     discordgo.ChannelTypeGuildForum,
 		ParentID: parentID,
 		Topic:    config.Topic,

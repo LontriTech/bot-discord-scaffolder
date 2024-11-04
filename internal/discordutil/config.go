@@ -1,7 +1,7 @@
 package discordutil
 
 import (
-	"io/ioutil"
+	"io"
 	"os"
 
 	"gopkg.in/yaml.v3"
@@ -14,7 +14,7 @@ func LoadConfig(filePath string) (*Config, error) {
 	}
 	defer yamlFile.Close()
 
-	byteValue, err := ioutil.ReadAll(yamlFile)
+	byteValue, err := io.ReadAll(yamlFile)
 	if err != nil {
 		return nil, err
 	}

@@ -54,31 +54,25 @@ func main() {
 
 	for _, categoryConfig := range config.Categories {
 		var categoryID string
-		var categoryNameKey string
+		var categoryKey string
 		var categoryName string
 
-		categoryNameKey = categoryConfig.Name
+		categoryName = discordutil.NormalizeCategoryName(categoryConfig.Name, categoryConfig.Prefix)
 
-		if categoryConfig.Prefix != "" {
-			categoryNameKey = discordutil.AddNamePrefix(categoryConfig.Prefix, categoryNameKey)
-		}
+		categoryKey = discordutil.NormalizeConfigKeyName(categoryName)
 
-		categoryName = categoryNameKey
-
-		categoryNameKey = discordutil.NormalizeName(categoryNameKey)
-
-		if existingCategory, exists := existingCategories[categoryNameKey]; exists {
+		if existingCategory, exists := existingCategories[categoryKey]; exists {
 			categoryID = existingCategory.ID
 			fmt.Printf("Category: '%s' already exists with ID: '%s'. Skipping creation... \n", categoryName, categoryID)
 		} else {
-			categoryID, err = discordutil.CreateCategory(dg, guildID, categoryConfig)
+			categoryID, err = discordutil.CreateCategory(dg, guildID, categoryConfig, categoryName)
 			if err != nil {
 				log.Printf("Error creating category '%s': %v", categoryName, err)
 				continue
 			}
 			fmt.Printf("Created category: '%s' with ID '%s' \n", categoryName, categoryID)
 
-			existingCategories[categoryNameKey] = &discordgo.Channel{
+			existingCategories[categoryKey] = &discordgo.Channel{
 				ID:   categoryID,
 				Name: categoryName,
 			}
@@ -86,31 +80,32 @@ func main() {
 
 		for _, channelConfig := range categoryConfig.Channels {
 			var channelID string
-			channelNameKey := discordutil.NormalizeName(channelConfig.Name)
+			channelKey := discordutil.NormalizeConfigKeyName(channelConfig.Name)
+			channelName := discordutil.NormalizeChannelName(channelConfig.Name, channelConfig.Type)
 
-			key := fmt.Sprintf("%s|%s", categoryID, channelNameKey)
+			key := fmt.Sprintf("%s|%s", categoryID, channelKey)
 
 			if existingChannel, exists := existingChannels[key]; exists {
 				channelID = existingChannel.ID
-				fmt.Printf("Channel: '%s' under Category: '%s' already exists with ID: '%s'. Skipping creation... \n", channelConfig.Name, categoryConfig.Name, channelID)
+				fmt.Printf("Channel: '%s' under Category: '%s' already exists with ID: '%s'. Skipping creation... \n", channelName, categoryName, channelID)
 			} else {
 				switch channelConfig.Type {
 				case "text":
-					channelID, err = discordutil.CreateTextChannel(dg, guildID, categoryID, channelConfig)
+					channelID, err = discordutil.CreateTextChannel(dg, guildID, categoryID, channelConfig, channelName)
 				case "voice":
-					channelID, err = discordutil.CreateVoiceChannel(dg, guildID, categoryID, channelConfig)
+					channelID, err = discordutil.CreateVoiceChannel(dg, guildID, categoryID, channelConfig, channelName)
 				case "forum":
-					channelID, err = discordutil.CreateForumChannel(dg, guildID, categoryID, channelConfig)
+					channelID, err = discordutil.CreateForumChannel(dg, guildID, categoryID, channelConfig, channelName)
 				default:
-					log.Printf("Unknown channel type: '%s' for channel: '%s' \n", channelConfig.Type, channelConfig.Name)
+					log.Printf("Unknown channel type: '%s' for channel: '%s' \n", channelConfig.Type, channelName)
 					continue
 				}
 
 				if err != nil {
-					log.Printf("Error creating Channel '%s': %v \n", channelConfig.Name, err)
+					log.Printf("Error creating Channel '%s': %v \n", channelName, err)
 					continue
 				}
-				fmt.Printf("Created Channel: '%s'\n - Type: '%s'\n - Category: '%s'\n - ID: '%s' \n", channelConfig.Name, channelConfig.Type, categoryName, channelID)
+				fmt.Printf("Created Channel: '%s'\n - Type: '%s'\n - Category: '%s'\n - ID: '%s' \n", channelName, channelConfig.Type, categoryName, channelID)
 				existingChannels[key] = &discordgo.Channel{
 					ID:       channelID,
 					Name:     channelConfig.Name,
