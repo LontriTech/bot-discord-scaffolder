@@ -13,7 +13,7 @@ import (
 func main() {
 	token, tokenErr := util.GetEnv("SCAFFOLDER_DISCORD_BOT_TOKEN")
 	guildID, guildIDErr := util.GetEnv("SCAFFOLDER_DISCORD_GUILD_ID")
-	configFile, configFileErr := util.GetEnv("SCAFFOLDER_CONFIG_FILE", "channels.yaml")
+	configFile, configFileErr := util.GetEnv("SCAFFOLDER_CONFIG_FILE", ".discord-scaffolder.yaml")
 
 	if tokenErr != nil {
 		log.Fatalln(tokenErr)

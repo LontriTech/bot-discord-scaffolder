@@ -1,0 +1,33 @@
+---
+name: 'Discord Community Scaffolder'
+description: 'Creates Discord Community Channels and Categories based on configuration file.'
+author: 'OLeonardoRodrigues 84041478+OLeonardoRodrigues@users.noreply.github.com'
+
+branding:
+  color: 'blue'
+  icon: 'disc'
+
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+
+inputs:
+    bot-token:
+        description: 'Bot Token for interactions with Discord Community. More info: https://discord.com/developers/docs/topics/oauth2#bot-users'
+        required: true
+
+    guild-id:
+        description: 'Discord Guild ID. (Guild ID is the same as Community ID or Server ID) More info: https://discord.com/developers/docs/resources/guild'
+        required: true
+
+    config-path:
+        description: 'Path to the configuration YAML file.'
+        required: false
+        default: ".discord-scaffolder.yaml"
+
+env:
+    SCAFFOLDER_DISCORD_BOT_TOKEN: ${{ inputs.bot-token }}
+
+    SCAFFOLDER_DISCORD_GUILD_ID: ${{ inputs.guild-id }}
+
+    SCAFFOLDER_CONFIG_FILE: ${{ inputs.config-path }}
