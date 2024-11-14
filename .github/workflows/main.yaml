@@ -16,6 +16,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     name: "Build Application Binary"
+    permissions:
+      packages: write
 
     steps:
     - name: "Checkout Code: REF ${{github.ref}}"
