@@ -107,8 +107,8 @@ jobs:
         cache-from: type=local,src=/tmp/.buildx-cache
         cache-to: type=local,dest=/tmp/.buildx-cache,mode=max
         tags: |
-          ghcr.io/$image_name:latest
-          ghcr.io/$image_name:${{ github.sha }}
+          ghcr.io/${{ vars.image_name }}:latest
+          ghcr.io/${{ vars.image_name }}:${{ github.sha }}
 
     - name: "Save Docker Cache"
       uses: actions/cache/save@v4
