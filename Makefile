@@ -1,6 +1,6 @@
 # https://www.gnu.org/software/make/
 
-APP_NAME := discordscaffolder
+APP_NAME := app
 CMD_DIR := ./cmd/$(APP_NAME)
 OUTPUT_DIR := dist
 OUTPUT_NAME := $(APP_NAME)
