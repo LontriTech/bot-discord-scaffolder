@@ -96,7 +96,7 @@ jobs:
     - name: "Sanitize Image Name"
       id: sanitize_image_name
       run: |
-        echo "image_name=$(echo ${{ github.repository_owner }}/${{ github.repository }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+        echo "image_name=$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
 
     - name: "Build and Push Docker Image"
       uses: docker/build-push-action@v6
